@@ -1,0 +1,39 @@
+<div id="clear" style="height: 5px;"></div>
+<div id="not-assumed-wrapper">
+<div class="show_tickets_head">
+    <div class="show_head ticket_depart_head ">Abteilung</div>
+    <div class="show_head ticket_prio_head ">Projekt</div>
+    <div class="show_head ticket_prio_head ">Priorität</div>
+    <div class="show_head ticket_title_head">Titel</div>
+    <div class="show_head show_ticket_creator">Autor</div>
+    <div class="show_head show_ticket_status">Annehmen</div>
+    <div class="show_head show_ticket_status">Datum</div>
+</div>
+<div id="clear" style="height: 5px;"></div>
+<?php foreach($tickets AS $ticket): ?>
+    <?php $showUrl = $this->url('tickets', array('action' => 'show', 'id' => $ticket->id));?>
+         <div class="show_tickets_row">
+            <div class="show_ticket tickets_depart"><?php echo $ticket->department;?></div>
+            <div class="show_ticket show_ticket_prio tickets_project" style="color: <?php echo $ticket->projectColor;?>"><?php echo $ticket->project;?></div>
+            <div class="show_ticket show_ticket_prio" style="color: <?php echo $ticket->prioColor;?>"><b><?php echo $ticket->prio;?></b></div>
+            <a class="black_link" href="<?php echo $showUrl;?>">
+                <div class="show_ticket show_ticket_title" >#<?php echo $ticket->id.' - ';?><?php echo $ticket->title;?></div>
+            </a>
+            <div class="show_ticket show_ticket_creator"><?php echo $ticket->creatorFirstname.' '.$ticket->creatorLastname;?></div>
+            <div class="show_ticket show_ticket_assume" >
+                <a href="#" class="green_link small_link" onclick="assume_ticket('<?php echo $ticket->id; ?>')">Annehmen</a>
+                <a href="#" class="red_link small_link" onclick="open_dialog()">Ablehnen</a>
+            </div>
+            <div class="show_ticket show_ticket_status ticket_date"><?php echo $ticket->create;?></div>
+        </div>
+        <div id="deny_dialog" title="Ticket ablehnen" style='z-index: 500;'>
+            <select id="deny_reason" class="deny-ticket-select">
+                <option value='Zu wenig Information'>Zu wenig Information</option>
+                <option value='Falsche Abteilung'>Falsche Abteilung</option>
+                <option value='Bitte um Rückruf'>Bitte um Rückruf</option>
+            </select>
+            <button class="deny-ticket-button" onclick="deny_ticket('<?php echo $ticket->id; ?>')">ablehnen</button>
+        </div>
+    <div id="clear"></div>
+<?php endforeach;?>
+</div> 

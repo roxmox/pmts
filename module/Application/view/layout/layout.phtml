@@ -1,0 +1,72 @@
+<?=$this->doctype();?>
+<?php
+error_reporting(E_ALL);
+?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+    <meta charset="utf-8">
+    <head>
+        <?php echo $this->headTitle('PMTS'); ?>
+        <?php //echo var_dump($this->cssFiles()); ?>
+        <?php echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!--  styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                        ->prependStylesheet($this->basePath() . '/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/css/datePicker.css')
+                        ->prependStylesheet($this->basePath() . '/js/jquery-ui-1.10.4/themes/ui-darkness/jquery-ui.css');
+              echo $this->headScript()->appendFile($this->basePath() . '/js/jquery.min.js');
+              echo $this->headScript()->appendFile($this->basePath() . '/js/jquery-ui-1.10.4/ui/jquery-ui.js');
+              echo $this->headScript()->appendFile($this->basePath() . '/js/tinymce/tinymce.min.js');
+              echo $this->headScript()->appendFile($this->basePath() . '/js/date.js');
+              echo $this->headScript()->appendFile($this->basePath() . '/js/jquery.datePicker.js');?> 
+    
+    <script type="text/javascript"> 
+    $(document).ready(function() {
+        $('.message').delay(800).fadeOut(3600);
+    
+    });
+    </script>
+    </head>
+    <body>
+      <div id="wrapper">
+       
+          <div id="logo">
+            <span id="logo_text">PMTS</span>
+                <?php 
+                   if ($this->getHelperPluginManager()->has('userShowWidget')) {
+                            echo $this->userShowWidget();
+                   }
+                   ?>
+
+            
+            <div id="page_title">
+                <?php // echo $this->pageTitle(); ?>
+            </div>
+         </div>
+             <?php
+             if ($this->getHelperPluginManager()->has('naviWidget')) {
+                echo $this->naviWidget($this->controllerName());
+             }
+             ?>
+             
+        <div id="content">
+            <div class="content_wrapper"> 
+            
+             <?php
+             if($this->flashMessenger()->hasMessages()){
+                echo '<div class="message">';
+                echo strip_tags($this->flashMessenger()->render());
+                echo '</div>';
+             }   
+           
+            echo $this->content; ?>
+           </div>
+        
+<!--        <div id="footer"><p>&copy; 2013 by RoxMox</p></div>-->
+      
+      </div> 
+    </body>
+</html>

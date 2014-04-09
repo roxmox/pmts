@@ -1,0 +1,15 @@
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('user-admin', array('action' => 'add')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('email'));
+echo '<br />';
+echo $this->formRow($form->get('firstname'));
+echo '<br />';
+echo $this->formRow($form->get('lastname'));
+echo '<br />';
+echo $this->formRow($form->get('password'));
+echo '<br />';
+echo $this->formSubmit($form->get('submit'));
+echo $this->form()->closeTag();

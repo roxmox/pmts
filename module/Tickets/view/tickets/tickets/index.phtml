@@ -1,0 +1,20 @@
+<script type="text/javascript"> 
+    
+    function assign_ticket(id){
+        var assign_id = $('#sel_'+id).val();
+        $.ajax({
+            type: "POST",
+            url: "/index.php/tickets/change",
+            data: { id: id, assign_id: assign_id  }
+        })
+            .done(function() {
+               window.location.reload();
+        }); 
+    }
+</script>
+<div class="tickets_headline">    
+    <?php echo (!empty($this->newTickets)) ? 'Ticket Eingang - Nicht zugewiesen('.count($this->newTickets).')' : 'Keine offenen Tickets'; ?>
+</div>
+ <div id="clear" style="height: 5px;"></div>
+<?php echo $this->partial('tickets/new',array('tickets' =>$this->newTickets, 'users' => $this->users));?>
+<div id="clear" style="height: 20px;"></div>

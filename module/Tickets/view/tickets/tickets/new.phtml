@@ -1,0 +1,160 @@
+<script type="text/javascript">
+    $(function(){
+	$('.date-pick').datePicker({clickInput:true});
+    });
+    
+    tinymce.init({
+        selector:'textarea[name=ticket]',
+         plugins: [
+                "textcolor"
+        ],
+
+        toolbar: "bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | styleselect formatselect fontselect fontsizeselect",
+        //toolbar2: "cut copy paste | searchreplace | bullist numlist | outdent indent blockquote | undo redo | link unlink anchor image media code | inserttime preview | forecolor backcolor",
+        //toolbar3: "table | hr removeformat | subscript superscript | charmap emoticons | print fullscreen | ltr rtl | spellchecker | visualchars visualblocks nonbreaking template pagebreak restoredraft",
+
+        menubar: false,
+        toolbar_items_size: 'small',
+        language : "de",
+        style_formats: [
+                {title: 'Bold text', inline: 'b'},
+                {title: 'Red text', inline: 'span', styles: {color: '#ff0000'}},
+                {title: 'Red header', block: 'h1', styles: {color: '#ff0000'}},
+                {title: 'Example 1', inline: 'span', classes: 'example1'},
+                {title: 'Example 2', inline: 'span', classes: 'example2'},
+                {title: 'Table styles'},
+                {title: 'Table row 1', selector: 'tr', classes: 'tablerow1'}
+        ],
+
+       
+});
+     
+  
+    //handle fileupload
+    function addFile(){
+        var data = new FormData();
+        data.append('file', $("#file-upload")[0].files[0]);
+        $.ajax({
+            url: '/index.php/tickets/fileupload',
+            data: data,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if(response != 'error' || response != 'invalid'){
+                    //console.log(response.search('.gif'));
+                    if(response.search('.jpg') == 32 || response.search('.png') == 32 || response.search('.gif') == 32){
+                        var content = '<img src="/files/tmp/th_'+response+'" />';
+                    }else{
+                        var content = '<a href="'+response+'" target="blank" class="black_link">File</a>';
+                    }
+                    $('#upload-preview').html(content);  
+                    $("#tmp_file").val(response);
+                    $("#file-upload").css('display','none');
+                    $("#add_file").css('display','none');
+                    $('#remove_file').show();
+                }else{
+                    alert(response);
+                }
+                    
+            }
+        });
+    }
+    
+    function removeFile(){
+        var file =  $("#tmp_file").val();
+        $.ajax({
+                type: "POST",
+                url: "/index.php/tickets/removeFile",
+                data: { file: file },
+                success: function(){
+                    $('#upload-preview').html('');  
+                    $("#file-upload").show();
+                    $("#add_file").show();
+                    $('#remove_file').css('display' , 'none');
+                    $("#file-upload").val('');
+                }
+            });
+    }
+</script>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('tickets', array('action' => 'new',)));
+$form->prepare();
+$this->uploadForm->prepare();
+//labels
+$titleLabel = $form->get('title')->getLabel();
+$ticketLabel = $form->get('ticket')->getLabel();
+$prioLabel = $form->get('prio_id')->getLabel();
+$departmentLabel = $form->get('department_id')->getLabel();
+$projectLabel = $form->get('project_id')->getLabel();
+$deadlineLabel = $form->get('deadline')->getLabel();
+//elements
+$titleElement = $this->formElement($form->get('title'));
+$ticketElement = $this->formElement($form->get('ticket'));
+$prioElement = $this->formElement($form->get('prio_id'));
+$departmentElement = $this->formElement($form->get('department_id'));
+$projectElement = $this->formElement($form->get('project_id'));
+$deadlineElement = $this->formElement($form->get('deadline'));
+$submit = $this->formSubmit($form->get('submit'));
+?>
+<div id="ticket_form_bg">
+    <div class="ticket_head">Ticket erstellen</div>
+    <div id="ticket_form_wrapper">
+        <?php echo $this->form()->openTag($form); ?>
+        <div class="ticket_form_row">
+            <label class="ticket_form_label ticket_title <?php echo ($this->formElementErrors($form->get('title'))) ? 'error' : '';?>">
+                <?php echo $titleLabel;?>
+            </label>
+            <div class="ticket_form_element"><?php echo $titleElement;?></div>
+        </div>
+        
+        <div class="ticket_form_row">
+            <div class="ticket_form_selectbox">
+             <label class="ticket_form_label  <?php echo ($this->formElementErrors($form->get('project_id'))) ? 'error' : '';?>">
+                 <?php echo $projectLabel;?>
+            </label>
+                <div class="ticket_form_element "><?php echo $projectElement;?></div>
+            </div>
+            <div class="ticket_form_selectbox">
+                <label class="ticket_form_label  <?php echo ($this->formElementErrors($form->get('department_id'))) ? 'error' : '';?>">
+                    <?php echo $departmentLabel;?></label>
+                <div class="ticket_form_element "><?php echo $departmentElement;?></div>
+            </div>
+             <div class="ticket_form_selectbox">
+                <label class="ticket_form_label  <?php echo ($this->formElementErrors($form->get('prio_id'))) ? 'error' : '';?>">
+                    <?php echo $prioLabel;?></label>
+            <div class="ticket_form_element "><?php echo $prioElement;?></div>
+            </div>
+            <div class="ticket_form_selectbox">
+                <label class="ticket_form_label">
+                    <?php echo $deadlineLabel;?></label>
+            <div class="ticket_form_element"><?php echo $deadlineElement;?></div>
+            </div>
+             
+        </div>
+        <br>
+        <div class="ticket_form_row">
+           <div class="ticket_form_element">
+               <br /><br >
+               <?php echo $ticketElement;?></div>
+        </div>
+        <?php echo $this->formElement($form->get('tmp_file'));?>
+        <?php echo $this->formElement($form->get('creator_id'));?>
+        <div class="ticket_form_row">
+             <div style="width: 605px; height: 1px;float: left;"> 
+                   <?php echo $this->formElement($this->uploadForm->get('fileupload'));?></div>
+             <div class="ticket_form_element"><?php echo $submit;?></div>
+             <?php echo $this->form()->closeTag();?>
+        </div>
+        <div class="upload_wrapper">
+            <div id="upload-preview">
+                
+            </div>
+            <button onclick="addFile();return false;" class="submitbutton" id="add_file">Datei anhängen</button>
+            <button onclick="removeFile();return false;" class="submitbutton" id="remove_file" style="display:none;">Datei entfernen</button>
+        </div>
+        <div id="clear"></div>
+       
+    </div>
+</div>

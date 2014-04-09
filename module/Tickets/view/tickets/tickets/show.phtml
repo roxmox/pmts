@@ -1,0 +1,42 @@
+<script type="text/javascript">
+    
+    function delete_ticket(ticketId){
+        var check = confirm("Delete Ticket #"+ticketId);
+        
+        if(check == true){
+           var url = 'http://pmts.local/index.php/tickets/delete/'+ticketId; 
+           window.location.href = url;
+        }
+    }
+</script>
+<?php
+$ticket = $this->ticket;
+//echo $ticket->id;exit;
+$this->pageTitle('Ticket - '.$ticket->id);
+//echo '<pre>';print_r($ticket);exit;
+?>
+<div id="ticket_show_head">
+    <div class="ticket_show_headline">
+        <span><?php echo '#'.$ticket->id.' '.$ticket->title;?></span>
+    </div>
+    <div id="ticket_show_head_left">
+        Project: <span style="color: <?php echo $ticket->projectColor;?>"><?php echo $ticket->project;?></span><br />
+        Creator: <?php echo $ticket->creatorFirstname.' '.$ticket->creatorLastname;?><br />
+        Date: <?php echo $ticket->create;?><br />
+    </div>
+    <div id="ticket_show_head_right">
+        Priority : <span style="background-color: <?php echo $ticket->prioColor;?>"><?php echo $ticket->prio;?></span><br />
+        Status   : <span style="background-color: <?php echo $ticket->statusCcolor;?>"><?php echo $ticket->status;?></span><br />
+        Deadline : <?php echo $ticket->deadline;?><br />
+    </div>
+</div>
+<div id="clear"></div>
+<div class="show_ticket_content" id="tka_<?php echo $ticket->id; ?>">
+    <div class="ticket_content"><?php echo $ticket->ticket; ?></div>
+    <?php $editUrl = $this->url('tickets', array('action' => 'edit', 'id' => $ticket->id));?>
+    <?php if($this->userIsAllowed('tickets', 'edit')):?>
+        <a href="<?php echo $editUrl;?>"><button class='submitbutton'>edit</button></a> 
+            <button class='submitbutton' onclick="delete_ticket('<?php echo $ticket->id;?>')">delete</button>
+    <?php endif;?>
+</div>
+<?php echo $this->commentHelper($ticket->id); ?>

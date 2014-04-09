@@ -1,0 +1,81 @@
+<script type='text/javascript'>
+$(document).ready(function(){
+     getComments();
+})    
+    
+    function getComments(){
+        $('#comments_wrapper').html('');
+        $.get('/index.php/comments/index/'+<?php echo $this->ticketId;?>, function(html){
+            $('#comments_wrapper').html(html);
+        });
+    }
+    
+    function addComment(){
+        if($('textarea[name="comment"]').val() == ''){
+            alert('no comment');
+        }else{
+            var ticket_id = $('input[name="ticket_id"]').val();
+            var user_id = $('input[name="user_id"]').val();
+            var comment = $('textarea[name="comment"]').val();
+            
+            $.ajax({
+                type: "POST",
+                url: "/index.php/comments/new",
+                data: { comment: comment, ticket_id: ticket_id, creator_id: user_id },
+                success: function(){
+                    $('textarea[name="comment"]').val('');
+                    getComments(); 
+                }
+            });
+        }
+    }
+    
+    function edit_comment(id){
+        $('#edit_btn_'+id).css('display', 'none');
+        $('#delete_btn_'+id).css('display', 'none');
+        $('#save_btn_'+id).css('display', '');
+        $('#comment_'+id).prop('contenteditable', 'true');
+        $('#comment_'+id).css('border', '1px dashed #000000');
+    }
+    
+    function save_comment(id){
+        var comment = $('#comment_'+id).text();
+        if(comment !== ''){
+            $.ajax({
+                type: "POST",
+                url: "/index.php/comments/edit",
+                data: { comment: comment, id: id },
+                success: function(){
+                    $('#edit_btn_'+id).css('display', '');
+                    $('#delete_btn_'+id).css('display', '');
+                    $('#save_btn_'+id).css('display', 'none');
+                    $('#comment_'+id).prop('contenteditable', 'false');
+                    $('#comment_'+id).css('border', '0px');
+                    getComments(); 
+                }
+            });
+        }else{
+            alert('no comment');
+        }
+    }
+    
+    function delete_comment(id){
+        var check = confirm("Delete Comment");
+        
+        if(check == true){
+            $.get('/index.php/comments/delete/'+id, function(){
+                getComments();
+            });
+        }
+    }
+</script>
+<div class="headline">Comments</div>
+<div id='comments_wrapper'><!-- comment container --></div>
+      <?php echo $this->form()->openTag($form); ?>
+      <?php echo $this->formElement($form->get('comment'));?>
+      <br />
+      <button class='submitbutton' onclick='addComment();return false;'>add comment</button>
+      <?php echo $this->formElement($form->get('ticket_id'));?>
+      <?php echo $this->formElement($form->get('user_id'));?>
+      <?php echo $this->form()->closeTag();?>
+</div>

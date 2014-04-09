@@ -1,0 +1,18 @@
+<?php 
+if($this->identity){
+    echo $this->showControllerWidget();
+    $navi = 'navigation';
+
+    if($this->controller == 'user-admin'){
+        $navi = 'user_navi';
+    }elseif($this->controller == 'tickets'){
+        $navi = 'ticket_navi';
+    }
+    echo '<div id="navigation">';
+    $this->navigation($navi)->menu()->setUlClass('nav');
+    echo $this->navigation($navi)->menu(); 
+
+    echo '</div>';
+    
+}
+?>

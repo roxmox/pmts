@@ -1,0 +1,93 @@
+<?php
+$this->pageTitle('My Tickets');
+$createdTickets = $this->createdTickets;
+$assignTickets = $this->assignTickets;
+?>
+<script type="text/javascript"> 
+     $(function() {
+        $( "#deny_dialog" ).dialog({
+            autoOpen: false,
+            show: {
+                 effect: "blind",
+                 duration: 1000
+            },
+            hide: {
+                effect: "blind",
+                duration: 1000
+            }
+        });
+    });
+    function open_dialog() {
+        $( "#deny_dialog" ).dialog( "open" );
+    }
+       
+    function toggle_section(section){
+        $('#'+section).toggle();
+    }
+    
+    function set_status(id){
+        var status_id = $('#sel_'+id).val();
+        $.ajax({
+            type: "POST",
+            url: "/index.php/tickets/status",
+            data: { id: id, status_id: status_id  }
+        })
+            .done(function(color) {
+               $('#sel_'+id).removeAttr('style');
+               $('#sel_'+id).css('color', color);
+        }); 
+    }
+    
+    function assume_ticket(id){
+        $.ajax({
+            type: "POST",
+            url: "/index.php/tickets/change",
+            data: { id: id, assumed: 1}
+        })
+            .done(function() {
+               window.location.reload();
+        }); 
+    }
+    
+    function deny_ticket(id){
+        var reason = $( "#deny_reason" ).val();
+        $("#deny_dialog" ).dialog();
+        $.ajax({
+            type: "POST",
+            url: "/index.php/tickets/change",
+            data: { id: id, assumed: 2, deny_reason: reason}
+        })
+            .done(function() {
+               window.location.reload();
+        }); 
+    }
+</script>
+<div id="clear" style="height: 30px;"></div>
+<div class="tickets_headline" onclick="toggle_section('not-assumed-wrapper')">
+    <?php echo (!empty($this->notAssumedTickets)) ? 'Nicht angenommen('.count($this->notAssumedTickets).')' : 'Keine offenen Tickets'; ?>
+</div>
+    <?php echo $this->partial('mytickets/not_assumed',array('tickets' =>$this->notAssumedTickets));?>
+<div id="clear" style="height: 30px;"></div>
+    
+
+<div class="tickets_headline" onclick="toggle_section('assumed-wrapper')">
+    <?php echo (!empty($this->assumedTickets)) ? 'Angenommene Tickets('.count($this->assumedTickets).')' : 'Keine angenommenen Tickets'; ?>
+</div>
+    <?php echo $this->partial('mytickets/assumed',array('tickets' =>$this->assumedTickets, 'select' => $this->select));?>
+<div id="clear" style="height: 30px;"></div>
+     
+
+<div class="tickets_headline" onclick="toggle_section('deny-wrapper')">
+    <?php echo (!empty($this->denyTickets)) ? 'Abgelehnte Tickets('.count($this->denyTickets).')' : 'Keine abgelehnten Tickets'; ?>
+</div>
+    <?php echo $this->partial('mytickets/deny',array('tickets' =>$this->denyTickets));?>
+<div id="clear" style="height: 30px;"></div>
+
+
+<div class="tickets_headline" onclick="toggle_section('created-wrapper')">
+   <?php echo (!empty($this->createdTickets)) ? 'Erstellte Tickets('.count($this->createdTickets).')' : 'Keine erstellten Tickets'; ?>
+</div>
+    <?php echo $this->partial('mytickets/created',array('tickets' =>$this->createdTickets));?>
+<div id="clear" style="height: 30px;"></div>
+    
+

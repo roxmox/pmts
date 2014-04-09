@@ -1,0 +1,41 @@
+
+<div id="clear" style="height: 5px;"></div>
+<div id="assumed-wrapper">
+<div class="show_tickets_head">
+    <div class="show_head ticket_depart_head ">Abteilung</div>    
+    <div class="show_head ticket_prio_head ">Projekt</div>
+    <div class="show_head ticket_prio_head ">Priorität</div>
+    <div class="show_head ticket_title_head">Titel</div>
+    <div class="show_head show_ticket_creator">Autor</div>
+    <div class="show_head show_ticket_status">Status</div>
+    <div class="show_head show_ticket_status">Datum</div>
+</div>
+<div id="clear" style="height: 5px;"></div>
+    <?php foreach($tickets AS $ticket): ?>
+         <?php $showUrl = $this->url('tickets', array('action' => 'show', 'id' => $ticket->id));?>
+         <div class="show_tickets_row">
+            <div class="show_ticket tickets_depart"><?php echo $ticket->department;?></div>
+            <div class="show_ticket show_ticket_prio tickets_project" style="color: <?php echo $ticket->projectColor;?>"><?php echo $ticket->project;?></div>
+            <div class="show_ticket show_ticket_prio" style="color: <?php echo $ticket->prioColor;?>"><b><?php echo $ticket->prio;?></b></div>
+            <a class="black_link" href="<?php echo $showUrl;?>">
+                <div class="show_ticket show_ticket_title" >#<?php echo $ticket->id.' - ';?><?php echo $ticket->title;?></div>
+            </a>
+            <div class="show_ticket show_ticket_creator"><?php echo $ticket->creatorFirstname.' '.$ticket->creatorLastname;?></div>
+            <div class="show_ticket show_ticket_status" >
+                <select size="1" id='sel_<?php echo $ticket->id;?>' onchange="set_status('<?php echo $ticket->id;?>')" style="color: <?php echo $ticket->statusColor;?>">
+                    <?php 
+                    foreach($this->select AS $key => $val){
+                        $sel = '';
+                        if($key == $ticket->statusId){
+                            $sel = 'selected';
+                        }
+                        echo '<option value="'.$key.'" '.$sel.'>'.$val.'</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="show_ticket show_ticket_status ticket_date"><?php echo $ticket->create;?></div>
+    <div id="clear"></div>
+</div>
+<?php endforeach;?>
+</div>

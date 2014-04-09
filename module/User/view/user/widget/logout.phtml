@@ -1,0 +1,8 @@
+<?php
+$url = $this->url('user', array('action' => 'logout'));
+?>
+<div id="login_wrapper">
+   <span><?php echo $this->identity->firstname.' '.$this->identity->lastname;?></span><br />
+   <a href="<?php echo $url; ?>"><button class="auth_btn">logout</button></a>
+</div>
+

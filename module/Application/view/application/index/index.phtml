@@ -1,0 +1,14 @@
+<?php
+$this->pageTitle('Welcome');
+$urlTickets = $this->url('tickets', array('action' => 'index'));
+$urlUserAdmin = $this->url('user-admin', array('action' => 'add'));
+
+?>
+
+<a href="<?php echo $urlTickets; ?>"><div class="app_btn">Ticket System</div></a><br />
+<?php 
+//echo var_dump($this->userIsAllowed('user-admin'));
+if($this->userIsAllowed('user-admin')){
+    echo '<a href="'.$urlUserAdmin.'"><div class="app_btn">Benutzerverwaltung</div></a>';
+}
+?>
